@@ -62,7 +62,7 @@ typings/
 
 # sandbox/doodle pad
 dev.js
-dev_notes.txt
+dev_notes.js
 
 # test data
 *.json
