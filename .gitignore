@@ -61,7 +61,8 @@ typings/
 .next
 
 # sandbox/doodle pad
-dev.js
+dev1.js
+dev2.js
 dev_notes.js
 
 # test data
