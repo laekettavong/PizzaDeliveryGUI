@@ -23,7 +23,7 @@ Build an API for a pizza-delivery company.
 
 # USER Services
 #### Create user
-Endpoint: <host>:<port>/users
+Endpoint: `<host>`:`<port>`/users
 Method: POST
 Request body: JSON represenatation of user
 Required fields : firstName, lastName, email, password, address, city, state, zip
@@ -42,16 +42,16 @@ Required fields : firstName, lastName, email, password, address, city, state, zi
 ```
 
 #### Get user data
-Endpoint: <host>:<port>/users
+Endpoint: `<host>`:`<port>`/users
 Method: GET
 Required request header 
-    token : authToken
+    `token` : authToken
 
 #### Update user
-Endpoint: <host>:<port>/users
+Endpoint: `<host>`:`<port>`/users
 Method: PUT
 Required request header 
-    token : authToken
+    `token` : authToken
 Request body: JSON representation of user info to updatem
 Optional user fields to update, must specify at least one field
 
@@ -65,15 +65,15 @@ Optional user fields to update, must specify at least one field
 ```
 
 #### Delete user
-Endpoint: <host>:<port>/users
+Endpoint: `<host>`:`<port>`/users
 Method: DELETE
 Required request header 
-    token : authToken
+    `token` : authToken
 
 
 # LOGIN Services
 #### Login, get authentication token
-Endpoint: <host>:<port>/login
+Endpoint: `<host>`:`<port>`/login
 Method: POST
 Request body: user credential
 Required fields: email, password
@@ -86,29 +86,29 @@ Required fields: email, password
 ```
 
 #### Get item menu
-Endpoint: <host>:<port>/login
+Endpoint: `<host>`:`<port>`/login
 Method: GET
 Required request header 
-    token : authToken
+    `token` : authToken
 
 #### Extend auth token expiration date
-Endpoint: <host>:<port>/login
+Endpoint: `<host>`:`<port>`/login
 Method: PUT
 Required request header 
-    token : authToken
+    `token` : authToken
 
 #### Logout, destroy auth token
-Endpoint: <host>:<port>/login
+Endpoint: `<host>`:`<port>`/login
 Method: DELETE
 Required request header 
-    token : authToken
+    `token` : authToken
 
 # SHOPPING CART
 #### Save shopping cart
-Endpoint: <host>:<port>/shoppingcart
+Endpoint: `<host>`:`<port>`/shoppingcart
 Method: POST
 Required request header 
-    token : authToken
+    `token` : authToken
 Request body: JSON representation of shopping cart
 
 ```
@@ -189,17 +189,17 @@ Request body: JSON representation of shopping cart
 
 
 #### Get shopping cart
-Endpoint: <host>:<port>/shoppingcart
+Endpoint: `<host>`:`<port>`/shoppingcart
 Method: GET
 Required request header 
-    token : authToken
+    `token` : authToken
 
 
 #### Update shopping cart
-Endpoint: <host>:<port>/shoppingcart
+Endpoint: `<host>`:`<port>`/shoppingcart
 Method: PUT
 Required request header 
-    token : authToken
+    `token` : authToken
 Request body: JSON represnation of shopping cart to update
 
 ```
@@ -271,24 +271,24 @@ Request body: JSON represnation of shopping cart to update
 ```
 
 #### Empty shopping cart
-Endpoint: <host>:<port>/shoppingcart
+Endpoint: `<host>`:`<port>`/shoppingcart
 Method: DELETE
 Required request header 
-    token : authToken
+    `token` : authToken
 
 
 # ORDER Services
 #### Place order processing, process order
-Endpoint: <host>:<port>/orders
+Endpoint: `<host>`:`<port>`/orders
 Method: POST
 Required request header 
-    token : authToken
+    `token` : authToken
 
 #### Get order
-Endpoint: <host>:<port>/orders
+Endpoint: `<host>`:`<port>`/orders
 Method: GET
 Required request header 
-    token : authToken
+    `token` : authToken
 
 
 # Dev Notes
