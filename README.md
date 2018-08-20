@@ -21,8 +21,8 @@ Build an API for a pizza-delivery company.
 6. When an order is placed, a receipt email should be sent out. The app should integrate with the sandbox of Mailgun.com for this.
 
 
-# USER Services
-**Create user**
+### USER Services
+#### Create user
 Endpoint: <host>:<port>/users
 Method: POST
 Request body: JSON represenatation of user
@@ -41,13 +41,13 @@ Required fields : firstName, lastName, email, password, address, city, state, zi
 }
 ```
 
-**Get user data**
+#### Get user data
 Endpoint: <host>:<port>/users
 Method: GET
 Required request header 
     token : authToken
 
-**Update user**
+#### Update user
 Endpoint: <host>:<port>/users
 Method: PUT
 Required request header 
@@ -64,15 +64,15 @@ Optional user fields to update, must specify at least one field
 }
 ```
 
-**Delete user**
+#### Delete user
 Endpoint: <host>:<port>/users
 Method: DELETE
 Required request header 
     token : authToken
 
 
-# LOGIN Services
-**Login, get authentication token**
+### LOGIN Services
+#### Login, get authentication token
 Endpoint: <host>:<port>/login
 Method: POST
 Request body: user credential
@@ -85,26 +85,26 @@ Required fields: email, password
 }
 ```
 
-**Get item menu**
+#### Get item menu
 Endpoint: <host>:<port>/login
 Method: GET
 Required request header 
     token : authToken
 
-**Extend auth token expiration date**
+#### Extend auth token expiration date
 Endpoint: <host>:<port>/login
 Method: PUT
 Required request header 
     token : authToken
 
-**Logout, destroy auth token**
+#### Logout, destroy auth token
 Endpoint: <host>:<port>/login
 Method: DELETE
 Required request header 
     token : authToken
 
-# SHOPPING CART
-**Save shopping cart**
+### SHOPPING CART
+#### Save shopping cart
 Endpoint: <host>:<port>/shoppingcart
 Method: POST
 Required request header 
@@ -188,14 +188,14 @@ Request body: JSON representation of shopping cart
 ```
 
 
-**Get shopping cart**
+#### Get shopping cart
 Endpoint: <host>:<port>/shoppingcart
 Method: GET
 Required request header 
     token : authToken
 
 
-**Update shopping cart**
+#### Update shopping cart
 Endpoint: <host>:<port>/shoppingcart
 Method: PUT
 Required request header 
@@ -270,21 +270,21 @@ Request body: JSON represnation of shopping cart to update
 }
 ```
 
-**Empty shopping cart**
+#### Empty shopping cart
 Endpoint: <host>:<port>/shoppingcart
 Method: DELETE
 Required request header 
     token : authToken
 
 
-# ORDER Services
-**Place order processing, process order**
+### ORDER Services
+#### Place order processing, process order
 Endpoint: <host>:<port>/orders
 Method: POST
 Required request header 
     token : authToken
 
-**Get order**
+#### Get order
 Endpoint: <host>:<port>/orders
 Method: GET
 Required request header 
