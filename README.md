@@ -21,7 +21,7 @@ Build an API for a pizza-delivery company.
 6. When an order is placed, a receipt email should be sent out. The app should integrate with the sandbox of Mailgun.com for this.
 
 
-### USER Services
+# USER Services
 #### Create user
 Endpoint: <host>:<port>/users
 Method: POST
@@ -71,7 +71,7 @@ Required request header
     token : authToken
 
 
-### LOGIN Services
+# LOGIN Services
 #### Login, get authentication token
 Endpoint: <host>:<port>/login
 Method: POST
@@ -103,7 +103,7 @@ Method: DELETE
 Required request header 
     token : authToken
 
-### SHOPPING CART
+# SHOPPING CART
 #### Save shopping cart
 Endpoint: <host>:<port>/shoppingcart
 Method: POST
@@ -277,7 +277,7 @@ Required request header
     token : authToken
 
 
-### ORDER Services
+# ORDER Services
 #### Place order processing, process order
 Endpoint: <host>:<port>/orders
 Method: POST
