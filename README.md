@@ -1,4 +1,4 @@
-# PizzaDeliveryAPI
+# PizzaDeliveryGUI
 
 This is a light weight REST API application for a fictious pizza-delivery company. Once the consumer's credenitals are created and authenticated, a "authentication" token is provided where by subsequent RESTful requests can be made with it. Upon authentication, the consumer is presented with a JSON representation of a menu of items available for ordering. The consumer can perform user and shopping cart CRUD operations. Upon filling the shopping cart, the consumer can place an order with a valid Stripe payment token. When an order is placed, the consumer's is charged via Stripe followed by an order notification email powered by Mailgun. Unless extended, the auth token is valid for an hour by defulat. Upon "logout", said token is destroyed.
 
@@ -290,10 +290,3 @@ Method: GET
 Required request header  
     `token` : authToken  
 
-
-# Dev Notes
-Locally create a **.data** in the root directory, then create following subdirectories inside it - TODO: introduce script to handle this.
-- carts
-- orders
-- tokens
-- users
