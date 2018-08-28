@@ -1,0 +1,16 @@
+
+        <footer class="container-fluid text-center" style="padding: 50px 20px;">
+            <a href="#topPage" title="To Top">
+            <span class="glyphicon glyphicon-chevron-up" ></span>
+            </a>
+            <p>Copyright {global.yearCreated} {global.companyName} | All Rights Reserved</p>
+        </footer>
+
+        <script type="text/javascript">
+            $(".nav a").on("click", function(){
+              $(".nav").find(".active").removeClass("active");
+              $(this).parent().addClass("active");
+            });
+        </script>
+    </body>
+</html>

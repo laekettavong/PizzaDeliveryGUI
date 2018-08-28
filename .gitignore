@@ -67,3 +67,10 @@ dev_notes.js
 
 # test data
 *.json
+
+# dev sandbox/notes
+dev.*
+package.json
+package-lock.json
+*_bk.html
+*_bk.css
