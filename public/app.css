@@ -39,10 +39,17 @@ hr.divider {
   margin: 20px 0px;
 }
 
-
 .container ul li.loggedIn{
   display: none;
 } 
+
+body.loggedIn .container ul li.loggedIn{
+  display: inline-block;
+}
+
+body.loggedIn .container ul li.loggedOut{
+  display: none;
+}
 
 .formError {
   display: none;
@@ -59,7 +66,7 @@ hr.divider {
 }
 .formSuccess{
   display: none;
-  background-color: #217844;
+  /* background-color: #217844;
   font-style: italic;
   color: #fff;
   padding: 10px 15px;
@@ -68,5 +75,5 @@ hr.divider {
   text-align: center;
   border-color: #35c06d;
   border-width: 2px;
-  border-style: solid;
+  border-style: solid; */
 }

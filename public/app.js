@@ -10,14 +10,20 @@ const app = {
     },
     // Init (bootstrapping)
     init : () => {
-    // Bind all form submissions
-    app.bindForms();
+        // Bind all form submissions
+        app.bindForms();
 
-    // Get the token from localstorage
-    app.getSessionToken();
+        // Bind logout logout button
+        app.bindLogoutButton();
 
-    // Renew token
-    app.tokenRenewalLoop();
+        // Get the token from localstorage
+        app.getSessionToken();
+
+        // Renew token
+        app.tokenRenewalLoop();
+
+        // Load data on page
+        app.loadDataOnPage();
 
     },
     // AJAX client for RESTful API
@@ -56,7 +62,7 @@ console.log("XXX", payload);
 
             // If  there is a current session token set, add that as a header as well
             if(app.config.sessionToken){
-                xhr.setRequestHeader('token', app.config.sessionToken.id);
+                xhr.setRequestHeader('token', app.config.sessionToken.token);
             }
             
             // When the request comes back, handle response
@@ -74,20 +80,6 @@ console.log("XXX", payload);
                     }
                 }
             }
-
-            // xhr.onload = () => {
-            //     if(xhr.status >= 200 && xhr.status < 300){
-            //         if(callback) {
-            //             try {
-            //                 callback(xhr.status, JSON.parse(xhr.responseText));
-            //             } catch(err) {
-            //                 callback(statusCode, false);
-            //             }
-            //         }
-            //     }else{
-            //         callback(xhr.status, false);
-            //     }
-            // };
 
             xhr.send(JSON.stringify(payload));
         }
@@ -188,7 +180,7 @@ console.log("XXX", payload);
                 'email' : requestPayload.email,
                 'password' : requestPayload.password
             };
-        console.log('Payload', JSON.stringify(newPayload));
+    
             app.client.request(undefined, 'api/login', 'POST', undefined, newPayload, function(newStatusCode,newResponsePayload) {
                 // Display an error on the form if needed
                 if(newStatusCode !== 200) {
@@ -211,36 +203,31 @@ console.log("XXX", payload);
             app.setSessionToken(responsePayload);
             window.location = '/menu';
         }
-      
-        // // If forms saved successfully and they have success messages, show them
-        // let formsWithSuccessMessages = ['accountEdit1', 'accountEdit2', 'checksEdit1'];
-        // if(formsWithSuccessMessages.indexOf(formId) > -1){ 
-        //     document.querySelector(`#${formId} .formSuccess`).style.display = 'block';
-        // }
-      
-        // // If the user just deleted their account, redirect them to the account-delete page
-        // if(formId == 'accountEdit3'){
-        //     app.logUserOut(false);
-        //     window.location = '/account/deleted';
-        // }
+        debugger;
+        // If forms saved successfully and they have success messages, show them
+        let formsWithSuccessMessages = ['accountEdit1', 'accountEdit2'];
+        formsWithSuccessMessages.forEach((form) => {
+            document.querySelector("#"+form+" .formSuccess").style.display = 'none';
+        });
 
-        // // If the user just created a new check successfully, redirect back to the dashboard
-        // if(formId == 'checksCreate'){
-        //     window.location = '/checks/all';
-        // }
+        if(formsWithSuccessMessages.indexOf(formId) > -1){ 
+            document.querySelector(`#${formId} .formSuccess`).style.display = 'block';
+        }
+      
+        // If the user just deleted their account, redirect them to the account-delete page
+        if(formId == 'accountEdit3'){
+            app.logUserOut(false);
+            window.location = '/account/deleted';
+        }
 
-        // // If the user just deleted a check, redirect them to the dashboard
-        // if(formId == 'checksEdit2'){
-        //     window.location = '/checks/all';
-        // }
     },
     loadAccountEditPage : () => {
         // Get the phone number from the current token, or log the user out if none is there
-        let phone = typeof(app.config.sessionToken.phone) == 'string' ? app.config.sessionToken.phone : false;
-        if(phone) {
+        let email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
+        if(email) {
             // Fetch the user data
             let queryStringObject = {
-                'phone' : phone
+                'email' : email
             };
             app.client.request(undefined, 'api/users', 'GET', queryStringObject, undefined, (statusCode, responsePayload) => {
                 if(statusCode == 200) {
@@ -253,7 +240,6 @@ console.log("XXX", payload);
                     document.querySelector('#accountEdit1 .stateInput').value = responsePayload.state;
                     document.querySelector('#accountEdit1 .zipInput').value = responsePayload.zip;
 
-            
                     // Put the hidden email field into both forms
                     let hiddenEmailInputs = document.querySelectorAll('input.hiddenEmailInput');
                     for(let i = 0; i < hiddenEmailInputs.length; i++) {
@@ -270,7 +256,6 @@ console.log("XXX", payload);
         }
     },
     getSessionToken : () => {
-        debugger;
         let tokenString = localStorage.getItem('token');
         if(typeof(tokenString) == 'string'){
             try {
@@ -288,7 +273,6 @@ console.log("XXX", payload);
         }
     },
     setLoggedInClass : (add) => {
-        debugger;
         let target = document.querySelector('body');
         if(add) {
             target.classList.add('loggedIn');
@@ -297,7 +281,6 @@ console.log("XXX", payload);
         }
     },
     setSessionToken : (token) => {
-        debugger;
         app.config.sessionToken = token;
         let tokenString = JSON.stringify(token);
         localStorage.setItem('token',tokenString);
@@ -349,20 +332,30 @@ console.log("XXX", payload);
     },
     logUserOut : () => {
         // Get the current token id
-        let tokenId = typeof(app.config.sessionToken.id) == 'string' ? app.config.sessionToken.id : false;
+        let tokenId = typeof(app.config.sessionToken.token) == 'string' ? app.config.sessionToken.token : false;
       
         // Send the current token to the tokens endpoint to delete it
-        let queryStringObject = {
-          'id' : tokenId
+        let tokenData = {
+          'token' : tokenId
         };
-        app.client.request(undefined, 'api/logout', 'DELETE', queryStringObject, undefined, (statusCode, responsePayload) => {
+        app.client.request(undefined, 'api/logout', 'DELETE', tokenData, undefined, (statusCode, responsePayload) => {
             // Set the app.config token as false
             app.setSessionToken(false);
         
             // Send the user to the logged out page
             window.location = '/session/deleted';
-      
         });
+    },
+    loadDataOnPage : () => {
+        // Get the current page from the body class
+        let bodyClasses = document.querySelector('body').classList;
+        let primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
+      
+        // Logic for account settings page
+        if(primaryClass == 'accountEdit'){
+            app.loadAccountEditPage();
+        }
+
     },
 }
 
