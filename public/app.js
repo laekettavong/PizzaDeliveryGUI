@@ -1,4 +1,3 @@
-
 /*
 * Frontend logic for the Application
 */
@@ -24,7 +23,6 @@ const app = {
 
         // Load data on page
         app.loadDataOnPage();
-
     },
     // AJAX client for RESTful API
     client : {
@@ -35,7 +33,7 @@ const app = {
             queryStringObj = StringUtils.isValidObject(queryStringObj);
             payload = StringUtils.isValidObject(payload);
             callback = StringUtils.isValidFunction(callback);
-console.log("XXX", payload);
+
             // For each query string parameter sent, add it to path
             let requestUrl = `${path}?`;
             let counter = 0;
@@ -70,13 +68,12 @@ console.log("XXX", payload);
                 if(xhr.readyState == XMLHttpRequest.DONE) {
                     let statusCode = xhr.status;
                     let responseReturned = xhr.responseText;
-
                     if(callback) {
-                        try {
+                        //try {
                             callback(statusCode, JSON.parse(responseReturned));
-                        } catch(err) {
-                            callback(statusCode, false);
-                        }
+                       // } catch(err) {
+                       //     callback(statusCode, false);
+                        //}
                     }
                 }
             }
@@ -148,7 +145,7 @@ console.log("XXX", payload);
       
                   if(statusCode == 403){
                     // log the user out
-                    //app.logUserOut();
+                    app.logUserOut();
       
                   } else {
       
@@ -203,7 +200,7 @@ console.log("XXX", payload);
             app.setSessionToken(responsePayload);
             window.location = '/menu';
         }
-        debugger;
+
         // If forms saved successfully and they have success messages, show them
         let formsWithSuccessMessages = ['accountEdit1', 'accountEdit2'];
         formsWithSuccessMessages.forEach((form) => {
@@ -283,8 +280,9 @@ console.log("XXX", payload);
     setSessionToken : (token) => {
         app.config.sessionToken = token;
         let tokenString = JSON.stringify(token);
+
         localStorage.setItem('token',tokenString);
-        if(typeof(token) == 'object'){
+        if(typeof(token) == 'object') {
             app.setLoggedInClass(true);
         } else {
             app.setLoggedInClass(false);
@@ -352,10 +350,9 @@ console.log("XXX", payload);
         let primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
       
         // Logic for account settings page
-        if(primaryClass == 'accountEdit'){
+        if(primaryClass == 'accountEdit') {
             app.loadAccountEditPage();
         }
-
     },
 }
 
