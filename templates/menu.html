@@ -229,19 +229,9 @@
         </div>
       </div>
 
-
-
-
-
-
-
-
-
-
-
-   <!-- Pizza Modal -->
-  <div class="modal fade" id="pizzaModal" role="dialog">
-      <div class="modal-dialog">
+    <!-- Pizza Modal -->
+     <div class="modal fade" id="pizzaModal" role="dialog">
+        <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
@@ -249,72 +239,73 @@
             <h4 class="modal-title">Cheese Pizza</h4>
           </div>
           <div class="modal-body">
-              <form action="">
-              <h4>Size</h4>
-              <div class="radio">
-                <label><input type="radio" name="pizzaSize" checked>Small</label>
-                <label><input type="radio" name="pizzaSize">Medium</label>
-                <label><input type="radio" name="pizzaSize">Large</label>
-                <label><input type="radio" name="pizzaSize">Sheet</label>
-              </div>
-             <div>
-              <h4>Toppings</h4>
-                <label class="checkbox-inline" for="cheese">
-                  <input type="checkbox" name="topping" id="cheese" value="cheese">Cheese
-                </label>
-                <label class="checkbox-inline" for="mozzarella">
-                  <input type="checkbox" name="topping" id="mozzarella" value="mozzarella">Mozzarella Cheese
-                </label>
-                <label class="checkbox-inline" for="pepperoni">
-                  <input type="checkbox" name="topping" id="pepperoni" value="Pepperoni">Pepperoni
-                </label>
-                <label class="checkbox-inline" for="ham">
-                  <input type="checkbox" name="topping" id="sausage" value="sausage">Sausage
-                </label>
-                <label class="checkbox-inline">
-                  <input type="checkbox" name="topping" id="ham" value="ham">Ham
-                </label>
-                <label class="checkbox-inline" for="bacon">
-                  <input type="checkbox" name="topping" id="bacon" value="Bacon">Bacon
-                </label>
-                <label class="checkbox-inline" for="chicken">
-                  <input type="checkbox" name="topping" id="chicken" value="chicken">Chicken
-                </label>
-                <label class="checkbox-inline" for="meatballs" >
-                  <input type="checkbox" name="topping" id="meatballs" value="meatballs">Meatballs
-                </label>
-                <label class="checkbox-inline" for="mushrooms">
-                  <input type="checkbox" name="topping" id="mushrooms" value="mushrooms">Mushrooms
-                </label>
-                <label class="checkbox-inline" for="olives">
-                  <input type="checkbox" name="topping" id="olives" value="olives">Olives
-                </label>
-                <label class="checkbox-inline" for="onions">
-                  <input type="checkbox" name="topping" id="onions" value="onions">Onions
-                </label>
-                <label class="checkbox-inline" for="pineapple">
-                  <input type="checkbox" name="topping" id="pineapple" value="pineapple">Pineapple
-                </label>
-                <label class="checkbox-inline" for="peppers">
-                  <input type="checkbox" name="topping" id="peppers" value="peppers">Peppers
-                </label>
-              </div>
-                <div class="form-group">
-                    <h4>Qty:</h4>
-                    <select class="form-control" id="pizzaQty">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                      </select>
-                  </div>
-              </form>
-          </div>
-          <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary">Add to cart</button>
-          </div>
+            <form id="pizzaForm" action="/api/shoppingcart" method="PUT" enctype="application/json">
+                <input type="hidden" class="pizzaType" name="pizzaType" value=""/> 
+                    <h4>Size</h4>
+                    <div class="radio">
+                        <label><input type="radio" name="pizzaSize" value="sm" checked>Small</label>
+                        <label><input type="radio" name="pizzaSize" value="med" >Medium</label>
+                        <label><input type="radio" name="pizzaSize" value="lg">Large</label>
+                        <label><input type="radio" name="pizzaSize" value="sheet">Sheet</label>
+                    </div>
+                    <div>
+                    <h4>Toppings</h4>
+                        <label class="checkbox-inline" for="cheese">
+                        <input type="checkbox" name="topping" id="cheese" value="cheese">Cheese
+                        </label>
+                        <label class="checkbox-inline" for="mozzarella">
+                        <input type="checkbox" name="topping" id="mozzarella cheese" value="mozzarella cheese">Mozzarella Cheese
+                        </label>
+                        <label class="checkbox-inline" for="pepperoni">
+                        <input type="checkbox" name="topping" id="pepperoni" value="Pepperoni">Pepperoni
+                        </label>
+                        <label class="checkbox-inline" for="ham">
+                        <input type="checkbox" name="topping" id="sausage" value="sausage">Sausage
+                        </label>
+                        <label class="checkbox-inline">
+                        <input type="checkbox" name="topping" id="ham" value="ham">Ham
+                        </label>
+                        <label class="checkbox-inline" for="bacon">
+                        <input type="checkbox" name="topping" id="bacon" value="Bacon">Bacon
+                        </label>
+                        <label class="checkbox-inline" for="chicken">
+                        <input type="checkbox" name="topping" id="chicken" value="chicken">Chicken
+                        </label>
+                        <label class="checkbox-inline" for="meatballs" >
+                        <input type="checkbox" name="topping" id="meatballs" value="meatballs">Meatballs
+                        </label>
+                        <label class="checkbox-inline" for="mushrooms">
+                        <input type="checkbox" name="topping" id="mushrooms" value="mushrooms">Mushrooms
+                        </label>
+                        <label class="checkbox-inline" for="olives">
+                        <input type="checkbox" name="topping" id="olives" value="olives">Olives
+                        </label>
+                        <label class="checkbox-inline" for="onions">
+                        <input type="checkbox" name="topping" id="onions" value="onions">Onions
+                        </label>
+                        <label class="checkbox-inline" for="pineapple">
+                        <input type="checkbox" name="topping" id="pineapple" value="pineapple">Pineapple
+                        </label>
+                        <label class="checkbox-inline" for="peppers">
+                        <input type="checkbox" name="topping" id="peppers" value="peppers">Peppers
+                        </label>
+                    </div>
+                        <div class="form-group">
+                            <h4>Qty:</h4>
+                            <select class="form-control" id="pizzaQty">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add to cart</button>
+                </div>
+            </form>
         </div> 
       </div>
     </div>
@@ -327,31 +318,30 @@
             <div class="modal-header">
               <h5 class="modal-title" id="wingsModalLabel">Chicken Wings selection</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div class="modal-body">
-              <form action="">
-                <div class="form-group">
-                  <label class="col-form-label" for="wingsSeasoning">Seasoning</label>
-                  <input type="text" class="form-control" id="wingsSeasoning" disabled>
+            <form id="wingsForm" action="/api/shoppingcart" method="PUT" enctype="application/json">
+                <div class="modal-body">
+                    <div class="form-group">
+                    <label>Seasoning</label>
+                    <input type="text" class="form-control" id="wingsSeasoning" disabled>
+                    </div>
+                    <div class="form-group">
+                    <label>Qty:</label>
+                    <select class="form-control" id="wingsQty">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                  <label>Qty:</label>
-                  <select class="form-control" id="wingsQty">
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                      <option>4</option>
-                      <option>5</option>
-                    </select>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add to cart</button>
                 </div>
-              </form>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-primary">Add to cart</button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
@@ -365,31 +355,30 @@
             <div class="modal-header">
               <h5 class="modal-title" id="breadsticksModalLabel">Breadsticks selection</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div class="modal-body">
-              <form action="">
-                <div class="form-group">
-                  <label class="col-form-label" for="breadstickSeasoning">Seasoning</label>
-                  <input type="text" class="form-control" id="breadstickSeasoning" disabled>
+            <form id="breadsticksForm" action="/api/shoppingcart" method="PUT" enctype="application/json">
+                <div class="modal-body">
+                    <div class="form-group">
+                    <label>Seasoning</label>
+                    <input type="text" class="form-control" id="breadstickSeasoning" disabled>
+                    </div>
+                    <div class="form-group">
+                    <label>Qty:</label>
+                    <select class="form-control" id="breadsticksQty">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                  <label>Qty:</label>
-                  <select class="form-control" id="breadsticksQty">
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                      <option>4</option>
-                      <option>5</option>
-                    </select>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add to cart</button>
                 </div>
-              </form>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-primary">Add to cart</button>
-            </div>
+            </form>  
           </div>
         </div>
       </div>
@@ -403,67 +392,36 @@
             <div class="modal-header">
               <h5 class="modal-title" id="sodaModalLabel">Soda selection</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
               </button>
             </div>
+            <form id="sodaForm" action="/api/shoppingcart" method="PUT" enctype="application/json">
             <div class="modal-body">
-                <form action="">
+                <!-- <div class="formError"></div>
+                <div class="formSuccess"></div> -->
+                <!-- <input type="hidden" name="_method" value="PUT"/>
+                <input type="hidden" name="category" value="soda"/> -->
+                <!-- <input type="hidden" class="tokenInput" name="token" value=""/> -->
                 <div class="form-group">
-                  <label>Flavor</label>
-                  <input type="text" class="form-control" id="sodaFlavor" disabled>
+                    <label>Flavor</label>
+                    <input type="text" class="form-control" id="sodaFlavor" disabled>
                 </div>
                 <div class="form-group">
-                  <label>Qty:</label>
-                  <select class="form-control" id="sodaQty">
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                      <option>4</option>
-                      <option>5</option>
+                    <label>Qty:</label>
+                    <select class="form-control" id="sodaQty">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
                     </select>
-                </div>
-              </form>
+                </div>              
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-primary">Add to cart</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add to cart</button>
             </div>
+        </form>
           </div>
         </div>
       </div>
     </div>
-
-    <script type='text/javascript'>
-      $('#sodaModal').on('show.bs.modal', function(event) {
-        let button = $(event.relatedTarget) 
-        let soda = button.data('soda');
-        let modal = $(this);
-        modal.find('.modal-title').text('Two liters of ' + soda);
-        modal.find('.modal-body input').val(soda);
-      });
-
-      $('#pizzaModal').on('show.bs.modal', function (event) {
-        let button = $(event.relatedTarget);
-        let pizza = button.data('pizza');
-        let modal = $(this);
-        modal.find('.modal-title').text(`${pizza} Pizza`)
-      });
-
-      $('#wingsModal').on('show.bs.modal', function(event) {
-        let button = $(event.relatedTarget);
-        let wings = button.data('wings');
-        let modal = $(this);
-        modal.find('.modal-title').text(`${wings} Chicken Wings`);
-        modal.find('.modal-body input').val(wings);
-      });
-
-      $('#breadsticksModal').on('show.bs.modal', function(event) {
-        let button = $(event.relatedTarget);
-        let breadsticks = button.data('breadsticks');
-        let modal = $(this);
-        modal.find('.modal-title').text(`${breadsticks} Breadsticks`);
-        modal.find('.modal-body input').val(breadsticks);
-      });
-    </script>
-
-

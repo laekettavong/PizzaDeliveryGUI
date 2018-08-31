@@ -77,65 +77,72 @@ const app = {
                     }
                 }
             }
-
-            xhr.send(JSON.stringify(payload));
+            try {
+                xhr.send(JSON.stringify(payload));
+            } catch(err) {
+                console.log('AJAX error', err);
+            }
+            
         }
     },
     bindForms : () => {
         if(document.querySelector("form")) {
-          var allForms = document.querySelectorAll("form");
-          for(var i = 0; i < allForms.length; i++){
-              allForms[i].addEventListener("submit", function(e){
+            let allForms = document.querySelectorAll("form");
+            let bodyClasses = document.querySelector('body').classList;
+            let primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
+            for(let i = 0; i < allForms.length; i++){
+                allForms[i].addEventListener("submit", function(err){
+        
+                // Stop it from submitting
+                err.preventDefault();
+                let formId = this.id;
+                let path = this.action;
+                let method = this.method.toUpperCase();
       
-              // Stop it from submitting
-              e.preventDefault();
-              var formId = this.id;
-              var path = this.action;
-              var method = this.method.toUpperCase();
-      
-              // Hide the error message (if it's currently shown due to a previous error)
-              document.querySelector("#"+formId+" .formError").style.display = 'none';
-      
-              // Hide the success message (if it's currently shown due to a previous error)
-              if(document.querySelector("#"+formId+" .formSuccess")){
-                document.querySelector("#"+formId+" .formSuccess").style.display = 'none';
-              }
-      
-      
-              // Turn the inputs into a payload
-              var payload = {};
-              var elements = this.elements;
-              for(var i = 0; i < elements.length; i++){
-                if(elements[i].type !== 'submit'){
-                  // Determine class of element and set value accordingly
-                  var classOfElement = typeof(elements[i].classList.value) == 'string' && elements[i].classList.value.length > 0 ? elements[i].classList.value : '';
-                  var valueOfElement = elements[i].type == 'checkbox' && classOfElement.indexOf('multiselect') == -1 ? elements[i].checked : classOfElement.indexOf('intval') == -1 ? elements[i].value : parseInt(elements[i].value);
-                  var elementIsChecked = elements[i].checked;
-                  // Override the method of the form if the input's name is _method
-                  var nameOfElement = elements[i].name;
-                  if(nameOfElement == '_method'){
-                    method = valueOfElement;
-                  } else {
-                    // Create an payload field named "method" if the elements name is actually httpmethod
-                    if(nameOfElement == 'httpmethod'){
-                      nameOfElement = 'method';
+                if(primaryClass != 'menu') {
+                    // Hide the error message (if it's currently shown due to a previous error)
+                    document.querySelector("#"+formId+" .formError").style.display = 'none';
+
+                    // Hide the success message (if it's currently shown due to a previous error)
+                    if(document.querySelector("#"+formId+" .formSuccess")){
+                        document.querySelector("#"+formId+" .formSuccess").style.display = 'none';
                     }
-                    // If the element has the class "multiselect" add its value(s) as array elements
-                    if(classOfElement.indexOf('multiselect') > -1){
-                      if(elementIsChecked){
-                        payload[nameOfElement] = typeof(payload[nameOfElement]) == 'object' && payload[nameOfElement] instanceof Array ? payload[nameOfElement] : [];
-                        payload[nameOfElement].push(valueOfElement);
-                      }
-                    } else {
-                      payload[nameOfElement] = valueOfElement;
-                    }
-      
-                  }
                 }
-              }
+      
+      
+                // Turn the inputs into a payload
+                let payload = {};
+                let elements = this.elements;
+                for(let i = 0; i < elements.length; i++) {
+                    if(elements[i].type !== 'submit') {
+                        // Determine class of element and set value accordingly
+                        let classOfElement = typeof(elements[i].classList.value) == 'string' && elements[i].classList.value.length > 0 ? elements[i].classList.value : '';
+                        let valueOfElement = elements[i].type == 'checkbox' && classOfElement.indexOf('multiselect') == -1 ? elements[i].checked : classOfElement.indexOf('intval') == -1 ? elements[i].value : parseInt(elements[i].value);
+                        let elementIsChecked = elements[i].checked;
+                        // Override the method of the form if the input's name is _method
+                        let nameOfElement = elements[i].name;
+                        if(nameOfElement == '_method'){
+                            method = valueOfElement;
+                        } else {
+                            // Create an payload field named "method" if the elements name is actually httpmethod
+                            if(nameOfElement == 'httpmethod'){
+                            nameOfElement = 'method';
+                            }
+                            // If the element has the class "multiselect" add its value(s) as array elements
+                            if(classOfElement.indexOf('multiselect') > -1) {
+                                if(elementIsChecked) {
+                                    payload[nameOfElement] = typeof(payload[nameOfElement]) == 'object' && payload[nameOfElement] instanceof Array ? payload[nameOfElement] : [];
+                                    payload[nameOfElement].push(valueOfElement);
+                                }
+                            } else {
+                                payload[nameOfElement] = valueOfElement;
+                            }
+                        }
+                    }
+                }
       
               // If the method is DELETE, the payload should be a queryStringObject instead
-              var queryStringObject = method == 'DELETE' ? payload : {};
+              let queryStringObject = method == 'DELETE' ? payload : {};
       
               // Call the API
               app.client.request(undefined, path, method, queryStringObject, payload, function(statusCode,responsePayload){
@@ -149,20 +156,23 @@ const app = {
       
                   } else {
       
-                    // Try to get the error from the api, or set a default error message
-                    var error = typeof(responsePayload.Error) == 'string' ? responsePayload.Error : 'An error has occured, please try again';
-      
-                    // Set the formError field with the error text
-                    document.querySelector("#"+formId+" .formError").innerHTML = error;
-      
-                    // Show (unhide) the form error field on the form
-                    document.querySelector("#"+formId+" .formError").style.display = 'block';
+                    if(primaryClass != 'menu') {
+                        // Try to get the error from the api, or set a default error message
+                        let error = typeof(responsePayload.Error) == 'string' ? responsePayload.Error : 'An error has occured, please try again';
+        
+                        // Set the formError field with the error text
+                        document.querySelector("#"+formId+" .formError").innerHTML = error;
+        
+                        // Show (unhide) the form error field on the form
+                        document.querySelector("#"+formId+" .formError").style.display = 'block';
+                    }
                   }
                 } else {
                   // If successful, send to form response processor
-                  app.formResponseProcessor(formId,payload,responsePayload);
+                    if(primaryClass != 'menu') {
+                        app.formResponseProcessor(formId,payload,responsePayload);
+                    }
                 }
-      
               });
             });
           }
@@ -251,6 +261,153 @@ const app = {
         } else {
             app.logUserOut();
         }
+    },
+    loadMenuPage : () => {
+        // Pizza modal
+        $('#pizzaModal').on('show.bs.modal', function (event) {
+            let button = $(event.relatedTarget);
+            let pizza = button.data('pizza');
+            let modal = $(this);
+            modal.find('.modal-title').text(`${pizza} Pizza`)
+            modal.find('.modal-body .pizzaType').val(pizza);
+        });
+    
+        $('#pizzaForm').on('submit', function(event) {
+            event.preventDefault();
+            debugger;
+            let chosenToppings = [];
+            this.topping.forEach((top) => {
+                if(top.checked) {
+                    chosenToppings.push(top.id);
+                }
+            });
+
+            let chosenSize = 'sm';
+            this.pizzaSize.forEach((size) => {
+                if(size.checked) {
+                    chosenSize = size.value;
+                }
+            });
+
+            let pizza = {
+                category : 'pizza',
+                type : this.pizzaType.value,
+                size : chosenSize,
+                toppings : chosenToppings,
+                qty :  Number.parseInt(this.pizzaQty.value)
+            }
+
+            console.log(JSON.stringify(pizza));
+            app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, pizza, function(statusCode,responsePayload) {
+                console.log(statusCode, responsePayload);
+                if(statusCode == 200) {
+                    $('#pizzaModal').modal('toggle');
+                    return false;
+                }
+            });
+        });
+
+
+        // Wings modal
+        $('#wingsModal').on('show.bs.modal', function(event) {
+            let button = $(event.relatedTarget);
+            let wings = button.data('wings');
+            let modal = $(this);
+            modal.find('.modal-title').text(`${wings} Chicken Wings`);
+            modal.find('.modal-body input').val(wings);
+        });
+    
+        $('#wingsForm').on('submit', function(event) {
+            event.preventDefault();
+            let wings = {
+                category : 'wings',
+                seasoning : this.wingsSeasoning.value,
+                qty :  Number.parseInt(this.wingsQty.value)
+            }
+        
+            app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, wings, function(statusCode,responsePayload) {
+                console.log(statusCode, responsePayload);
+                if(statusCode == 200) {
+                    $('#wingsModal').modal('toggle');
+                    return false;
+                }
+            });
+        });
+
+        // Breadsticks modal
+        $('#breadsticksModal').on('show.bs.modal', function(event) {
+            let button = $(event.relatedTarget);
+            let breadsticks = button.data('breadsticks');
+            let modal = $(this);
+            modal.find('.modal-title').text(`${breadsticks} Breadsticks`);
+            modal.find('.modal-body input').val(breadsticks);
+        });
+
+        $('#breadsticksForm').on('submit', function(event) {
+            event.preventDefault();
+            let breadsticks = {
+                category : 'breadsticks',
+                seasoning : this.breadstickSeasoning.value,
+                qty :  Number.parseInt(this.breadsticksQty.value)
+            }
+            app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, breadsticks, function(statusCode,responsePayload) {
+                console.log(statusCode, responsePayload);
+                if(statusCode == 200) {
+                    $('#breadsticksModal').modal('toggle');
+                    return false;
+                }
+            });
+        });
+
+
+
+
+        // Soda modal
+        $('#sodaModal').on('show.bs.modal', function(event) {
+            let button = $(event.relatedTarget) 
+            let soda = button.data('soda');
+            let modal = $(this);
+            modal.find('.modal-title').text('Two liters of ' + soda);
+            modal.find('.modal-body input').val(soda);
+        });
+
+        $('#sodaForm').on('submit', function(event) {
+            event.preventDefault();
+            let soda = {
+                category : 'soda',
+                flavor : this.sodaFlavor.value,
+                qty :  Number.parseInt(this.sodaQty.value)
+            }
+            app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, soda, function(statusCode,responsePayload) {
+                console.log(statusCode, responsePayload);
+                if(statusCode == 200) {
+                    $('#sodaModal').modal('toggle');
+                    return false;
+                }
+            });
+        });
+
+        // // Get the phone number from the current token, or log the user out if none is there
+        // let email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
+        // if(email) {
+        //     // Fetch the user data
+        //     let queryStringObject = {
+        //         'email' : email
+        //     };
+        //     app.client.request(undefined, 'api/users', 'GET', queryStringObject, undefined, (statusCode, responsePayload) => {
+        //         if(statusCode == 200) {
+        //             // Put the data into the forms as values where needed
+        //             document.querySelector('#sodaForm .tokenInput').value = app.config.sessionToken.token;
+ 
+
+        //         } else {
+        //             // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
+        //             app.logUserOut();
+        //         }
+        //     });
+        // } else {
+        //     app.logUserOut();
+        // }
     },
     getSessionToken : () => {
         let tokenString = localStorage.getItem('token');
@@ -348,10 +505,14 @@ const app = {
         // Get the current page from the body class
         let bodyClasses = document.querySelector('body').classList;
         let primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
-      
         // Logic for account settings page
         if(primaryClass == 'accountEdit') {
             app.loadAccountEditPage();
+        }
+
+        // Logic for account settings page
+        if(primaryClass == 'menu') {
+            app.loadMenuPage();
         }
     },
 }
