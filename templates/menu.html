@@ -243,55 +243,55 @@
                 <input type="hidden" class="pizzaType" name="pizzaType" value=""/> 
                     <h4>Size</h4>
                     <div class="radio">
-                        <label><input type="radio" name="pizzaSize" value="sm" checked>Small</label>
-                        <label><input type="radio" name="pizzaSize" value="med" >Medium</label>
-                        <label><input type="radio" name="pizzaSize" value="lg">Large</label>
-                        <label><input type="radio" name="pizzaSize" value="sheet">Sheet</label>
+                        <label class="sizeInputLabel"><input type="radio" name="pizzaSize" value="sm" checked>Small</label>
+                        <label class="sizeInputLabel"><input type="radio" name="pizzaSize" value="med" >Medium</label>
+                        <label class="sizeInputLabel"><input type="radio" name="pizzaSize" value="lg">Large</label>
+                        <label class="sizeInputLabel"><input type="radio" name="pizzaSize" value="sheet">Sheet</label>
                     </div>
                     <div>
                     <h4>Toppings</h4>
-                        <label class="checkbox-inline" for="cheese">
+                        <label class="checkbox-inline toppingsInputLabel" for="cheese">
                         <input type="checkbox" name="topping" id="cheese" value="cheese">Cheese
                         </label>
-                        <label class="checkbox-inline" for="mozzarella">
+                        <label class="checkbox-inline toppingsInputLabel" for="mozzarella cheese">
                         <input type="checkbox" name="topping" id="mozzarella cheese" value="mozzarella cheese">Mozzarella Cheese
                         </label>
-                        <label class="checkbox-inline" for="pepperoni">
+                        <label class="checkbox-inline toppingsInputLabel" for="pepperoni">
                         <input type="checkbox" name="topping" id="pepperoni" value="Pepperoni">Pepperoni
                         </label>
-                        <label class="checkbox-inline" for="ham">
+                        <label class="checkbox-inline toppingsInputLabel" for="sausage">
                         <input type="checkbox" name="topping" id="sausage" value="sausage">Sausage
                         </label>
-                        <label class="checkbox-inline">
+                        <label class="checkbox-inline toppingsInputLabel">
                         <input type="checkbox" name="topping" id="ham" value="ham">Ham
                         </label>
-                        <label class="checkbox-inline" for="bacon">
+                        <label class="checkbox-inline toppingsInputLabel" for="bacon">
                         <input type="checkbox" name="topping" id="bacon" value="Bacon">Bacon
                         </label>
-                        <label class="checkbox-inline" for="chicken">
+                        <label class="checkbox-inline toppingsInputLabel" for="chicken">
                         <input type="checkbox" name="topping" id="chicken" value="chicken">Chicken
                         </label>
-                        <label class="checkbox-inline" for="meatballs" >
+                        <label class="checkbox-inline toppingsInputLabel" for="meatballs" >
                         <input type="checkbox" name="topping" id="meatballs" value="meatballs">Meatballs
                         </label>
-                        <label class="checkbox-inline" for="mushrooms">
+                        <label class="checkbox-inline toppingsInputLabel" for="mushrooms">
                         <input type="checkbox" name="topping" id="mushrooms" value="mushrooms">Mushrooms
                         </label>
-                        <label class="checkbox-inline" for="olives">
+                        <label class="checkbox-inline toppingsInputLabel" for="olives">
                         <input type="checkbox" name="topping" id="olives" value="olives">Olives
                         </label>
-                        <label class="checkbox-inline" for="onions">
+                        <label class="checkbox-inline toppingsInputLabel" for="onions">
                         <input type="checkbox" name="topping" id="onions" value="onions">Onions
                         </label>
-                        <label class="checkbox-inline" for="pineapple">
+                        <label class="checkbox-inline toppingsInputLabel" for="pineapple">
                         <input type="checkbox" name="topping" id="pineapple" value="pineapple">Pineapple
                         </label>
-                        <label class="checkbox-inline" for="peppers">
+                        <label class="checkbox-inline toppingsInputLabel" for="peppers">
                         <input type="checkbox" name="topping" id="peppers" value="peppers">Peppers
                         </label>
                     </div>
                         <div class="form-group">
-                            <h4>Qty:</h4>
+                            <h4>Qty</h4>
                             <select class="form-control" id="pizzaQty">
                                 <option>1</option>
                                 <option>2</option>
@@ -323,17 +323,24 @@
             <form id="wingsForm" action="/api/shoppingcart" method="PUT" enctype="application/json">
                 <div class="modal-body">
                     <div class="form-group">
-                    <label>Seasoning</label>
-                    <input type="text" class="form-control" id="wingsSeasoning" disabled>
+                        <label>Type</label>
+                        <div class="radio">
+                            <label class="sizeInputLabel"><input type="radio" name="wingsType" value="traditional" checked>Traditional</label>
+                            <label class="sizeInputLabel"><input type="radio" name="wingsType" value="boneless" >Bonesless</label>
+                        </div>
                     </div>
                     <div class="form-group">
-                    <label>Qty:</label>
-                    <select class="form-control" id="wingsQty">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                        <label>Seasoning</label>
+                        <input type="text" class="form-control wingsSeasoning" id="wingsSeasoning" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Qty</label>
+                        <select class="form-control" id="wingsQty">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
                         </select>
                     </div>
                 </div>
@@ -364,7 +371,7 @@
                     <input type="text" class="form-control" id="breadstickSeasoning" disabled>
                     </div>
                     <div class="form-group">
-                    <label>Qty:</label>
+                    <label>Qty</label>
                     <select class="form-control" id="breadsticksQty">
                         <option>1</option>
                         <option>2</option>
@@ -396,17 +403,12 @@
             </div>
             <form id="sodaForm" action="/api/shoppingcart" method="PUT" enctype="application/json">
             <div class="modal-body">
-                <!-- <div class="formError"></div>
-                <div class="formSuccess"></div> -->
-                <!-- <input type="hidden" name="_method" value="PUT"/>
-                <input type="hidden" name="category" value="soda"/> -->
-                <!-- <input type="hidden" class="tokenInput" name="token" value=""/> -->
                 <div class="form-group">
                     <label>Flavor</label>
                     <input type="text" class="form-control" id="sodaFlavor" disabled>
                 </div>
                 <div class="form-group">
-                    <label>Qty:</label>
+                    <label>Qty</label>
                     <select class="form-control" id="sodaQty">
                         <option>1</option>
                         <option>2</option>

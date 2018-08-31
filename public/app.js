@@ -314,13 +314,22 @@ const app = {
             let wings = button.data('wings');
             let modal = $(this);
             modal.find('.modal-title').text(`${wings} Chicken Wings`);
-            modal.find('.modal-body input').val(wings);
+            modal.find('.modal-body .wingsSeasoning').val(wings);
         });
     
         $('#wingsForm').on('submit', function(event) {
             event.preventDefault();
+
+            let chosenType = 'traditional';
+            this.wingsType.forEach((type) => {
+                if(type.checked) {
+                    chosenType = type.value;
+                }
+            });
+
             let wings = {
                 category : 'wings',
+                type : chosenType,
                 seasoning : this.wingsSeasoning.value,
                 qty :  Number.parseInt(this.wingsQty.value)
             }
