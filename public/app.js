@@ -88,7 +88,12 @@ const app = {
     },
     bindShoppingCart : () => {
         if(app.config.sessionToken) {
-            document.getElementById("shopping-cart-nav").href += `?token=${app.config.sessionToken.token}`;
+            let cartNav = $("#shopping-cart-nav");
+            cartNav.attr("href", cartNav.attr('href') + `?token=${app.config.sessionToken.token}`);
+            let hiddenTokenElem = document.querySelector('#payment-form .hiddenToken');
+            if(hiddenTokenElem) {
+                hiddenTokenElem.value = app.config.sessionToken.token;
+            }
           }
     },
     bindForms : () => {
@@ -147,42 +152,49 @@ const app = {
       
               // If the method is DELETE, the payload should be a queryStringObject instead
               let queryStringObject = method == 'DELETE' ? payload : {};
-              // Call the API
-              app.client.request(undefined, path, method, queryStringObject, payload, function(statusCode,responsePayload){
-                // Display an error on the form if needed
-                if(statusCode !== 200){
-                    if(statusCode == 403){
-                        // log the user out
-                        app.logUserOut();
-                    } else {
-                        if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
-                            // Try to get the error from the api, or set a default error message
-                            let error = typeof(responsePayload.Error) == 'string' ? responsePayload.Error : 'An error has occured, please try again';
-            
-                            // Set the formError field with the error text
-                            document.querySelector("#"+formId+" .formError").innerHTML = error;
-            
-                            // Show (unhide) the form error field on the form
-                            document.querySelector("#"+formId+" .formError").style.display = 'block';
-                        }
-                    }
-                } else {
+                if(!appHelper.isPaymentForm(formId)) {
+                    // Call the API
+                    app.client.request(undefined, path, method, queryStringObject, payload, function(statusCode,responsePayload){
+                        // Display an error on the form if needed
+                        if(statusCode !== 200){
+                            if(statusCode == 403){
+                                // log the user out
+                                app.logUserOut();
+                            } else {
+                                if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
+                                    // Try to get the error from the api, or set a default error message
+                                    let error = typeof(responsePayload.Error) == 'string' ? responsePayload.Error : 'An error has occured, please try again';
+                    
+                                    // Set the formError field with the error text
+                                    document.querySelector("#"+formId+" .formError").innerHTML = error;
+                    
+                                    // Show (unhide) the form error field on the form
+                                    document.querySelector("#"+formId+" .formError").style.display = 'block';
+                                }
+                            }
+                        } else {
 
-                    if(appHelper.isShoppingCart(primaryClass)) {
-                        $(`#${formId}`).remove();
-                        
-                        if(document.querySelectorAll(".itemForm").length == 0){
-                            $('#placeOrderBtn').remove();
-                            $('.hide-elem').show();
-                        }
-                    }
+                            if(appHelper.isShoppingCart(primaryClass)) {
+                                $(`#${formId}`).remove();
+                                
+                                if(document.querySelectorAll(".itemForm").length == 0){
+                                    $('#placeOrderBtn').remove();
+                                    $('.hide-elem').show();
+                                }
 
-                    // If successful, send to form response processor
-                    if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
-                        app.formResponseProcessor(formId,payload,responsePayload);
-                    }
+                                if(responsePayload && responsePayload.total) {
+                                    $('#cartTotal').text(`Total: ${responsePayload.total}`);
+                                }
+                            }
+
+                            // If successful, send to form response processor
+                            if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
+                                app.formResponseProcessor(formId,payload,responsePayload);
+                            }
+                        }
+                    });
                 }
-              });
+
             });
           }
         }
@@ -307,10 +319,11 @@ const app = {
             }
 
             app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, pizza, function(statusCode,responsePayload) {
-                console.log(statusCode, responsePayload);
                 if(statusCode == 200) {
                     $('#pizzaModal').modal('toggle');
                     return false;
+                } else {
+                    window.location = '/session/create';
                 }
             });
         });
@@ -342,10 +355,11 @@ const app = {
             }
         
             app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, wings, function(statusCode,responsePayload) {
-                console.log(statusCode, responsePayload);
                 if(statusCode == 200) {
                     $('#wingsModal').modal('toggle');
                     return false;
+                } else {
+                    window.location = '/session/create';
                 }
             });
         });
@@ -367,10 +381,11 @@ const app = {
                 qty :  Number.parseInt(this.breadsticksQty.value)
             }
             app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, breadsticks, function(statusCode,responsePayload) {
-                console.log(statusCode, responsePayload);
                 if(statusCode == 200) {
                     $('#breadsticksModal').modal('toggle');
                     return false;
+                } else {
+                    window.location = '/session/create';
                 }
             });
         });
@@ -392,101 +407,79 @@ const app = {
                 qty :  Number.parseInt(this.sodaQty.value)
             }
             app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, soda, function(statusCode,responsePayload) {
-                console.log(statusCode, responsePayload);
                 if(statusCode == 200) {
                     $('#sodaModal').modal('toggle');
                     return false;
+                }  else {
+                    window.location = '/session/create';
                 }
             });
         });
     },
     loadShoppingCartPage : () => {
-          // Create a Stripe client.
-          let stripe = Stripe('pk_test_FlXQmWqYk4oMObRwItKBYYpy');
+        // Create a Stripe client.
+        let stripe = Stripe('pk_test_FlXQmWqYk4oMObRwItKBYYpy');
 
-          // Create an instance of Elements.
-          let elements = stripe.elements();
+        // Create an instance of Elements.
+        let elements = stripe.elements();
 
-          // Custom styling can be passed to options when creating an Element.
-          // (Note that this demo uses a wider set of styles than the guide below.)
-          let style = {
+        // Custom styling can be passed to options when creating an Element.
+        // (Note that this demo uses a wider set of styles than the guide below.)
+        let style = {
             base: {
-              color: '#32325d',
-              lineHeight: '18px',
-              fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-              fontSmoothing: 'antialiased',
-              fontSize: '16px',
-              '::placeholder': {
+                color: '#32325d',
+                lineHeight: '18px',
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': {
                 color: '#aab7c4'
-              }
+                }
             },
             invalid: {
-              color: '#fa755a',
-              iconColor: '#fa755a'
+                color: '#fa755a',
+                iconColor: '#fa755a'
             }
-          };
+        };
 
-          // Create an instance of the card Element.
-          let card = elements.create('card', {style: style});
+        // Create an instance of the card Element.
+        let card = elements.create('card', {style: style});
 
-          // Add an instance of the card Element into the `card-element` <div>.
-          card.mount('#card-element');
+        // Add an instance of the card Element into the `card-element` <div>.
+        card.mount('#card-element');
 
-          // Handle real-time validation errors from the card Element.
-          card.addEventListener('change', function(event) {
+        // Handle real-time validation errors from the card Element.
+        card.addEventListener('change', function(event) {
             let displayError = document.getElementById('card-errors');
             if (event.error) {
-              displayError.textContent = event.error.message;
+                displayError.textContent = event.error.message;
             } else {
-              displayError.textContent = '';
+                displayError.textContent = '';
             }
-          });
+        });
 
-          // Handle form submission.
-          let form = document.getElementById('payment-form');
-          form.addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                stripe.createToken(card).then(function(result) {
+        // Handle form submission.
+        let form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            stripe.createToken(card).then(function(result) {
                 if (result.error) {
                     // Inform the user if there was an error.
                     let errorElement = document.getElementById('card-errors');
                     errorElement.textContent = result.error.message;
                 } else {
                     // Send the token to your server.
-                // stripeTokenHandler(result.token);
-
-                console.log(JSON.stringify(result.token));
-
                     app.client.request(undefined, 'api/orders', 'POST', undefined, result.token, function(statusCode,responsePayload) {
-                        console.log(statusCode, responsePayload);
+
                         if(statusCode == 200) {
-                            $('#sodaModal').modal('toggle');
+                            $('#orderModal').modal('toggle');
+                            window.location = '/account/shoppingCart'
                             return false;
                         }
                     });
                 }
-                });
-          });
-
-
-
-
-        //   $('#sodaForm').on('submit', function(event) {
-        //         event.preventDefault();
-        //         let soda = {
-        //             category : 'soda',
-        //             flavor : this.sodaFlavor.value,
-        //             qty :  Number.parseInt(this.sodaQty.value)
-        //         }
-        //         app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, soda, function(statusCode,responsePayload) {
-        //             console.log(statusCode, responsePayload);
-        //             if(statusCode == 200) {
-        //                 $('#sodaModal').modal('toggle');
-        //                 return false;
-        //             }
-        //         });
-        //     });
+            });
+        });
     },
 
     getSessionToken : () => {
@@ -671,6 +664,14 @@ const StringUtils = {
     },
     isTypeOfFunction(dataType) {
         return typeof(dataType) == 'function';
+    },
+    capitalizeFirstLetter(str) {
+        let strArray =  str.split(" ");
+        let capital = [];
+        for(let str of strArray) {
+            capital.push(str[0].toUpperCase() + str.substr(1));
+        }
+        return capital.join(" ");
     }
 }
 
@@ -682,9 +683,24 @@ const ArrayConstants = {
 
 const appHelper = {
     isNotMenuOrShoppingCart(className) {
-        return className.toLowerCase() != 'menu' && className.toLowerCase() != 'shoppingcart';
+        if(className)   {
+            return className.toLowerCase() != 'menu' && className.toLowerCase() != 'shoppingcart';
+        } else {
+            return false;
+        }
     },
     isShoppingCart(className) {
-        return className.toLowerCase() == 'shoppingcart'
+        if(className)   {
+            return className.toLowerCase() == 'shoppingcart'
+        } else {
+            return false;
+        }
+    },
+    isPaymentForm(formId) {
+        if(formId) {
+            return formId.toLowerCase() == 'payment-form';
+        } else {
+            return false;
+        } 
     }
 }

@@ -68,7 +68,12 @@ body.loggedIn .container ul li.loggedOut{
 }
 
 .shoppingCartCaption {
-  min-height: 165px;
+  min-height: 160px;
+}
+
+.cartItems {
+  border: 1px solid #f2f2f2; 
+  padding-top: 10px;
 }
 
 .StripeElement {
