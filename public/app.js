@@ -23,6 +23,8 @@ const app = {
 
         // Load data on page
         app.loadDataOnPage();
+
+        app.bindShoppingCart();
     },
     // AJAX client for RESTful API
     client : {
@@ -81,9 +83,13 @@ const app = {
                 xhr.send(JSON.stringify(payload));
             } catch(err) {
                 console.log('AJAX error', err);
-            }
-            
+            }  
         }
+    },
+    bindShoppingCart : () => {
+        if(app.config.sessionToken) {
+            document.getElementById("shopping-cart-nav").href += `?token=${app.config.sessionToken.token}`;
+          }
     },
     bindForms : () => {
         if(document.querySelector("form")) {
@@ -99,7 +105,7 @@ const app = {
                 let path = this.action;
                 let method = this.method.toUpperCase();
       
-                if(primaryClass != 'menu') {
+                if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
                     // Hide the error message (if it's currently shown due to a previous error)
                     document.querySelector("#"+formId+" .formError").style.display = 'none';
 
@@ -108,8 +114,6 @@ const app = {
                         document.querySelector("#"+formId+" .formSuccess").style.display = 'none';
                     }
                 }
-      
-      
                 // Turn the inputs into a payload
                 let payload = {};
                 let elements = this.elements;
@@ -143,33 +147,38 @@ const app = {
       
               // If the method is DELETE, the payload should be a queryStringObject instead
               let queryStringObject = method == 'DELETE' ? payload : {};
-      
               // Call the API
               app.client.request(undefined, path, method, queryStringObject, payload, function(statusCode,responsePayload){
                 // Display an error on the form if needed
-   
                 if(statusCode !== 200){
-      
-                  if(statusCode == 403){
-                    // log the user out
-                    app.logUserOut();
-      
-                  } else {
-      
-                    if(primaryClass != 'menu') {
-                        // Try to get the error from the api, or set a default error message
-                        let error = typeof(responsePayload.Error) == 'string' ? responsePayload.Error : 'An error has occured, please try again';
-        
-                        // Set the formError field with the error text
-                        document.querySelector("#"+formId+" .formError").innerHTML = error;
-        
-                        // Show (unhide) the form error field on the form
-                        document.querySelector("#"+formId+" .formError").style.display = 'block';
+                    if(statusCode == 403){
+                        // log the user out
+                        app.logUserOut();
+                    } else {
+                        if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
+                            // Try to get the error from the api, or set a default error message
+                            let error = typeof(responsePayload.Error) == 'string' ? responsePayload.Error : 'An error has occured, please try again';
+            
+                            // Set the formError field with the error text
+                            document.querySelector("#"+formId+" .formError").innerHTML = error;
+            
+                            // Show (unhide) the form error field on the form
+                            document.querySelector("#"+formId+" .formError").style.display = 'block';
+                        }
                     }
-                  }
                 } else {
-                  // If successful, send to form response processor
-                    if(primaryClass != 'menu') {
+
+                    if(appHelper.isShoppingCart(primaryClass)) {
+                        $(`#${formId}`).remove();
+                        
+                        if(document.querySelectorAll(".itemForm").length == 0){
+                            $('#placeOrderBtn').remove();
+                            $('.hide-elem').show();
+                        }
+                    }
+
+                    // If successful, send to form response processor
+                    if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
                         app.formResponseProcessor(formId,payload,responsePayload);
                     }
                 }
@@ -297,7 +306,6 @@ const app = {
                 qty :  Number.parseInt(this.pizzaQty.value)
             }
 
-            console.log(JSON.stringify(pizza));
             app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, pizza, function(statusCode,responsePayload) {
                 console.log(statusCode, responsePayload);
                 if(statusCode == 200) {
@@ -306,7 +314,6 @@ const app = {
                 }
             });
         });
-
 
         // Wings modal
         $('#wingsModal').on('show.bs.modal', function(event) {
@@ -368,9 +375,6 @@ const app = {
             });
         });
 
-
-
-
         // Soda modal
         $('#sodaModal').on('show.bs.modal', function(event) {
             let button = $(event.relatedTarget) 
@@ -395,29 +399,96 @@ const app = {
                 }
             });
         });
-
-        // // Get the phone number from the current token, or log the user out if none is there
-        // let email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
-        // if(email) {
-        //     // Fetch the user data
-        //     let queryStringObject = {
-        //         'email' : email
-        //     };
-        //     app.client.request(undefined, 'api/users', 'GET', queryStringObject, undefined, (statusCode, responsePayload) => {
-        //         if(statusCode == 200) {
-        //             // Put the data into the forms as values where needed
-        //             document.querySelector('#sodaForm .tokenInput').value = app.config.sessionToken.token;
- 
-
-        //         } else {
-        //             // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
-        //             app.logUserOut();
-        //         }
-        //     });
-        // } else {
-        //     app.logUserOut();
-        // }
     },
+    loadShoppingCartPage : () => {
+          // Create a Stripe client.
+          let stripe = Stripe('pk_test_FlXQmWqYk4oMObRwItKBYYpy');
+
+          // Create an instance of Elements.
+          let elements = stripe.elements();
+
+          // Custom styling can be passed to options when creating an Element.
+          // (Note that this demo uses a wider set of styles than the guide below.)
+          let style = {
+            base: {
+              color: '#32325d',
+              lineHeight: '18px',
+              fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+              fontSmoothing: 'antialiased',
+              fontSize: '16px',
+              '::placeholder': {
+                color: '#aab7c4'
+              }
+            },
+            invalid: {
+              color: '#fa755a',
+              iconColor: '#fa755a'
+            }
+          };
+
+          // Create an instance of the card Element.
+          let card = elements.create('card', {style: style});
+
+          // Add an instance of the card Element into the `card-element` <div>.
+          card.mount('#card-element');
+
+          // Handle real-time validation errors from the card Element.
+          card.addEventListener('change', function(event) {
+            let displayError = document.getElementById('card-errors');
+            if (event.error) {
+              displayError.textContent = event.error.message;
+            } else {
+              displayError.textContent = '';
+            }
+          });
+
+          // Handle form submission.
+          let form = document.getElementById('payment-form');
+          form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    // Inform the user if there was an error.
+                    let errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // Send the token to your server.
+                // stripeTokenHandler(result.token);
+
+                console.log(JSON.stringify(result.token));
+
+                    app.client.request(undefined, 'api/orders', 'POST', undefined, result.token, function(statusCode,responsePayload) {
+                        console.log(statusCode, responsePayload);
+                        if(statusCode == 200) {
+                            $('#sodaModal').modal('toggle');
+                            return false;
+                        }
+                    });
+                }
+                });
+          });
+
+
+
+
+        //   $('#sodaForm').on('submit', function(event) {
+        //         event.preventDefault();
+        //         let soda = {
+        //             category : 'soda',
+        //             flavor : this.sodaFlavor.value,
+        //             qty :  Number.parseInt(this.sodaQty.value)
+        //         }
+        //         app.client.request(undefined, 'api/shoppingcart', 'PUT', undefined, soda, function(statusCode,responsePayload) {
+        //             console.log(statusCode, responsePayload);
+        //             if(statusCode == 200) {
+        //                 $('#sodaModal').modal('toggle');
+        //                 return false;
+        //             }
+        //         });
+        //     });
+    },
+
     getSessionToken : () => {
         let tokenString = localStorage.getItem('token');
         if(typeof(tokenString) == 'string'){
@@ -519,9 +590,14 @@ const app = {
             app.loadAccountEditPage();
         }
 
-        // Logic for account settings page
+        // Logic for menu page
         if(primaryClass == 'menu') {
             app.loadMenuPage();
+        }
+
+        // Logic for shopping cart page
+        if(primaryClass == 'shoppingcart') {
+            app.loadShoppingCartPage();
         }
     },
 }
@@ -602,4 +678,13 @@ const ArrayConstants = {
     acceptableMethods : ['get', 'post', 'put', 'delete'],
     acceptableProtocols : ['https', 'http'],
     acceptableStates : ['up', 'down']
+}
+
+const appHelper = {
+    isNotMenuOrShoppingCart(className) {
+        return className.toLowerCase() != 'menu' && className.toLowerCase() != 'shoppingcart';
+    },
+    isShoppingCart(className) {
+        return className.toLowerCase() == 'shoppingcart'
+    }
 }
