@@ -70,7 +70,6 @@ dev_notes.js
 
 # dev sandbox/notes
 dev.*
-package.json
 package-lock.json
 *_bk.html
 *_bk.css
