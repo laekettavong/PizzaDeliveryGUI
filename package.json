@@ -1,0 +1,28 @@
+{
+  "name": "pizzadeliverygui",
+  "version": "1.0.0",
+  "description": "Pizza delivery app",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "mailgun-js": "^0.20.0",
+    "nodemon": "^1.18.3",
+    "stripe": "^6.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laekettavong/PizzaDeliveryGUI.git"
+  },
+  "author": "K. Lae Kettavong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/laekettavong/PizzaDeliveryGUI/issues"
+  },
+  "homepage": "https://github.com/laekettavong/PizzaDeliveryGUI#readme"
+}
