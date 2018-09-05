@@ -6,7 +6,6 @@
             <form id="accountEdit1" action="/api/users" method="PUT" enctype="application/json">
                 <input type="hidden" name="_method" value="PUT"/>
                 <div class="formError"></div>
-                <!-- <div class="formSuccess">Your Changes Have Been Saved</div> -->
                 <div class="formSuccess alert alert-success">
                         <strong>Success!</strong> Your changes have been saved.
                     </div>
@@ -55,7 +54,6 @@
             <form id="accountEdit2" action="/api/users" method="PUT" enctype="application/json">
                 <input type="hidden" name="_method" value="PUT"/>
                 <div class="formError"></div>
-                <!-- <div class="formSuccess">Your new password has been saved</div> -->
                 <div class="formSuccess alert alert-success">
                     <strong>Success!</strong> Your new password has been saved.
                 </div>
@@ -73,24 +71,50 @@
                 </div>
             </form>
         </div>
+
         <div class="container">
             <br>
             <hr class="divider">
             <h3>Delete Your Account</h3>
-            <form id="accountEdit3" action="/api/users" method="DELETE" enctype="application/json">
-                <input type="hidden" name="_method" value="DELETE"/>
-                <div class="formError"></div>
-                <!-- <div class="warning">Warning: This action cannot be undone. Dont click this button on accident!</div> -->
-                <div class="alert alert-danger">
-                    <strong>Warning!</strong> This action cannot be undone. Don't click this button on accident!
+            <div class="alert alert-danger">
+                <strong>Warning!</strong> This action cannot be undone. Don't click this button on accident!
+            </div>
+            <input class="hiddenEmailInput" type="hidden" name="email" />
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4 text-center">
+
+                    <a href="#" class="btn btn-danger" btn-xs" role="button" data-toggle="modal" data-target="#confirmModal">DELETE</a>
                 </div>
-                <input class="hiddenEmailInput" type="hidden" name="email" />
-                <div class="row">
-                    <div class="col-sm-4"></div>
-                    <div class="col-sm-4 text-center">
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                <div class="col-sm-4"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="modal fade" id="confirmModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <form id="accountEdit3" action="/api/users" method="DELETE" enctype="application/json">
+                            <input type="hidden" name="_method" value="DELETE"/>
+                            <div class="formError"></div>
+                            <div class="formSuccess"></div>
+
+
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Delete Account</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-danger">
+                                        <strong>Warning!</strong> Are you sure you want to delete the account?
+                                    </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">OK</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="col-sm-4"></div>
                 </div>
-            </form>
+            </div>
         </div>

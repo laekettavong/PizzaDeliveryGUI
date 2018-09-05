@@ -71,11 +71,7 @@ const app = {
                     let statusCode = xhr.status;
                     let responseReturned = xhr.responseText;
                     if(callback) {
-                        //try {
-                            callback(statusCode, JSON.parse(responseReturned));
-                       // } catch(err) {
-                       //     callback(statusCode, false);
-                        //}
+                        callback(statusCode, JSON.parse(responseReturned));
                     }
                 }
             }
@@ -88,115 +84,114 @@ const app = {
     },
     bindShoppingCart : () => {
         if(app.config.sessionToken) {
-            let cartNav = $("#shopping-cart-nav");
-            cartNav.attr("href", cartNav.attr('href') + `?token=${app.config.sessionToken.token}`);
+            let cartNav = $('#shopping-cart-nav');
+            cartNav.attr('href', cartNav.attr('href') + `?token=${app.config.sessionToken.token}`);
             let hiddenTokenElem = document.querySelector('#payment-form .hiddenToken');
             if(hiddenTokenElem) {
                 hiddenTokenElem.value = app.config.sessionToken.token;
             }
-          }
+        }
     },
     bindForms : () => {
-        if(document.querySelector("form")) {
-            let allForms = document.querySelectorAll("form");
+        if(document.querySelector('form')) {
+            let allForms = document.querySelectorAll('form');
             let bodyClasses = document.querySelector('body').classList;
             let primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
-            for(let i = 0; i < allForms.length; i++){
-                allForms[i].addEventListener("submit", function(err){
+            for(let i = 0; i < allForms.length; i++) {
+                allForms[i].addEventListener('submit', function(err) {
+                    // Stop it from submitting
+                    err.preventDefault();
+                    let formId = this.id;
+                    let path = this.action;
+                    let method = this.method.toUpperCase();
         
-                // Stop it from submitting
-                err.preventDefault();
-                let formId = this.id;
-                let path = this.action;
-                let method = this.method.toUpperCase();
-      
-                if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
-                    // Hide the error message (if it's currently shown due to a previous error)
-                    document.querySelector("#"+formId+" .formError").style.display = 'none';
-
-                    // Hide the success message (if it's currently shown due to a previous error)
-                    if(document.querySelector("#"+formId+" .formSuccess")){
-                        document.querySelector("#"+formId+" .formSuccess").style.display = 'none';
+                    if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
+                        // Hide the error message (if it's currently shown due to a previous error)
+                        document.querySelector(`#${formId} .formError`).style.display = 'none';
+                        
+                        // Hide the success message (if it's currently shown due to a previous error)
+                        if(document.querySelector(`#${formId} .formSuccess`)) {
+                            document.querySelector(`#${formId} .formSuccess`).style.display = 'none';
+                        }
                     }
-                }
-                // Turn the inputs into a payload
-                let payload = {};
-                let elements = this.elements;
-                for(let i = 0; i < elements.length; i++) {
-                    if(elements[i].type !== 'submit') {
-                        // Determine class of element and set value accordingly
-                        let classOfElement = typeof(elements[i].classList.value) == 'string' && elements[i].classList.value.length > 0 ? elements[i].classList.value : '';
-                        let valueOfElement = elements[i].type == 'checkbox' && classOfElement.indexOf('multiselect') == -1 ? elements[i].checked : classOfElement.indexOf('intval') == -1 ? elements[i].value : parseInt(elements[i].value);
-                        let elementIsChecked = elements[i].checked;
-                        // Override the method of the form if the input's name is _method
-                        let nameOfElement = elements[i].name;
-                        if(nameOfElement == '_method'){
-                            method = valueOfElement;
-                        } else {
-                            // Create an payload field named "method" if the elements name is actually httpmethod
-                            if(nameOfElement == 'httpmethod'){
-                            nameOfElement = 'method';
-                            }
-                            // If the element has the class "multiselect" add its value(s) as array elements
-                            if(classOfElement.indexOf('multiselect') > -1) {
-                                if(elementIsChecked) {
-                                    payload[nameOfElement] = typeof(payload[nameOfElement]) == 'object' && payload[nameOfElement] instanceof Array ? payload[nameOfElement] : [];
-                                    payload[nameOfElement].push(valueOfElement);
-                                }
+
+                    // Turn the inputs into a payload
+                    let payload = {};
+                    let elements = this.elements;
+                    for(let i = 0; i < elements.length; i++) {
+                        if(elements[i].type !== 'submit') {
+                            // Determine class of element and set value accordingly
+                            let classOfElement = typeof(elements[i].classList.value) == 'string' && elements[i].classList.value.length > 0 ? elements[i].classList.value : '';
+                            let valueOfElement = elements[i].type == 'checkbox' && classOfElement.indexOf('multiselect') == -1 ? elements[i].checked : classOfElement.indexOf('intval') == -1 ? elements[i].value : parseInt(elements[i].value);
+                            let elementIsChecked = elements[i].checked;
+                            // Override the method of the form if the input's name is _method
+                            let nameOfElement = elements[i].name;
+                            if(nameOfElement == '_method'){
+                                method = valueOfElement;
                             } else {
-                                payload[nameOfElement] = valueOfElement;
+                                // Create an payload field named "method" if the elements name is actually httpmethod
+                                if(nameOfElement == 'httpmethod'){
+                                nameOfElement = 'method';
+                                }
+                                // If the element has the class "multiselect" add its value(s) as array elements
+                                if(classOfElement.indexOf('multiselect') > -1) {
+                                    if(elementIsChecked) {
+                                        payload[nameOfElement] = typeof(payload[nameOfElement]) == 'object' && payload[nameOfElement] instanceof Array ? payload[nameOfElement] : [];
+                                        payload[nameOfElement].push(valueOfElement);
+                                    }
+                                } else {
+                                    payload[nameOfElement] = valueOfElement;
+                                }
                             }
                         }
                     }
-                }
-      
-              // If the method is DELETE, the payload should be a queryStringObject instead
-              let queryStringObject = method == 'DELETE' ? payload : {};
-                if(!appHelper.isPaymentForm(formId)) {
-                    // Call the API
-                    app.client.request(undefined, path, method, queryStringObject, payload, function(statusCode,responsePayload){
-                        // Display an error on the form if needed
-                        if(statusCode !== 200){
-                            if(statusCode == 403){
-                                // log the user out
-                                app.logUserOut();
+            
+                    // If the method is DELETE, the payload should be a queryStringObject instead
+                    let queryStringObject = method == 'DELETE' ? payload : {};
+                        if(!appHelper.isPaymentForm(formId)) {
+                            // Call the API
+                        app.client.request(undefined, path, method, queryStringObject, payload, function(statusCode,responsePayload){
+                            // Display an error on the form if needed
+                            if(statusCode !== 200){
+                                if(statusCode == 403){
+                                    // log the user out
+                                    app.logUserOut();
+                                } else {
+                                    if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
+                                        // Try to get the error from the api, or set a default error message
+                                        let error = typeof(responsePayload.Error) == 'string' ? responsePayload.Error : 'An error has occured, please try again';
+                        
+                                        // Set the formError field with the error text
+                                        document.querySelector(`#${formId} .formError`).innerHTML = `<div class="alert alert-warning"><strong>Warning!</strong> ${error}.</div>`;
+
+                                        // Show (unhide) the form error field on the form
+                                        document.querySelector(`#${formId} .formError`).style.display = 'block';
+                                    }
+                                }
                             } else {
+
+                                if(appHelper.isShoppingCart(primaryClass)) {
+                                    $(`#${formId}`).remove();
+                                    
+                                    if(document.querySelectorAll('.itemForm').length == 0) {
+                                        $('#placeOrderBtn').remove();
+                                        $('.hide-elem').show();
+                                    }
+
+                                    if(responsePayload && responsePayload.total) {
+                                        $('#cartTotal').text(`Total: ${responsePayload.total}`);
+                                    }
+                                }
+
+                                // If successful, send to form response processor
                                 if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
-                                    // Try to get the error from the api, or set a default error message
-                                    let error = typeof(responsePayload.Error) == 'string' ? responsePayload.Error : 'An error has occured, please try again';
-                    
-                                    // Set the formError field with the error text
-                                    document.querySelector("#"+formId+" .formError").innerHTML = error;
-                    
-                                    // Show (unhide) the form error field on the form
-                                    document.querySelector("#"+formId+" .formError").style.display = 'block';
+                                    app.formResponseProcessor(formId,payload,responsePayload);
                                 }
                             }
-                        } else {
-
-                            if(appHelper.isShoppingCart(primaryClass)) {
-                                $(`#${formId}`).remove();
-                                
-                                if(document.querySelectorAll(".itemForm").length == 0){
-                                    $('#placeOrderBtn').remove();
-                                    $('.hide-elem').show();
-                                }
-
-                                if(responsePayload && responsePayload.total) {
-                                    $('#cartTotal').text(`Total: ${responsePayload.total}`);
-                                }
-                            }
-
-                            // If successful, send to form response processor
-                            if(appHelper.isNotMenuOrShoppingCart(primaryClass)) {
-                                app.formResponseProcessor(formId,payload,responsePayload);
-                            }
-                        }
-                    });
-                }
-
-            });
-          }
+                        });
+                    }
+                });
+            }
         }
     },
     formResponseProcessor : (formId, requestPayload, responsePayload) => {
@@ -213,7 +208,7 @@ const app = {
                 // Display an error on the form if needed
                 if(newStatusCode !== 200) {
                     // Set the formError field with the error text
-                    document.querySelector(`#${formId} .formError`).innerHTML = 'Sorry, an error has occured. Please try again.';
+                    document.querySelector(`#${formId} .formError`).innerHTML =  `<div class="alert alert-danger"><strong>Error!</strong> Sorry, an error has occured. Please try again.</div>`;
             
                     // Show (unhide) the form error field on the form
                     document.querySelector(`#${formId} .formError`).style.display = 'block';
@@ -235,7 +230,7 @@ const app = {
         // If forms saved successfully and they have success messages, show them
         let formsWithSuccessMessages = ['accountEdit1', 'accountEdit2'];
         formsWithSuccessMessages.forEach((form) => {
-            document.querySelector("#"+form+" .formSuccess").style.display = 'none';
+            document.querySelector(`#${formId} .formSuccess`).style.display = 'none';
         });
 
         if(formsWithSuccessMessages.indexOf(formId) > -1){ 
@@ -470,18 +465,15 @@ const app = {
                 } else {
                     // Send the token to your server.
                     app.client.request(undefined, 'api/orders', 'POST', undefined, result.token, function(statusCode,responsePayload) {
-
                         if(statusCode == 200) {
                             $('#orderModal').modal('toggle');
-                            window.location = '/account/shoppingCart'
-                            return false;
+                            window.location = '/account/shoppingCart';
                         }
                     });
                 }
             });
         });
     },
-
     getSessionToken : () => {
         let tokenString = localStorage.getItem('token');
         if(typeof(tokenString) == 'string'){
@@ -666,12 +658,15 @@ const StringUtils = {
         return typeof(dataType) == 'function';
     },
     capitalizeFirstLetter(str) {
-        let strArray =  str.split(" ");
-        let capital = [];
-        for(let str of strArray) {
-            capital.push(str[0].toUpperCase() + str.substr(1));
+        if(str) {
+            let strArray =  str.split(" ");
+            let capital = [];
+            for(let str of strArray) {
+                capital.push(str[0].toUpperCase() + str.substr(1));
+            }
+            return capital.join(" ");
         }
-        return capital.join(" ");
+        return str;
     }
 }
 

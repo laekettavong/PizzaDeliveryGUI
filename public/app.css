@@ -11,15 +11,6 @@
   min-height: 330px;
 }
 
-/* .modal-dialog {
-  position:fixed;
-  top:auto;
-  right:auto;
-  left:auto;
-  bottom:0;
-}  */
-
-
 .padding-bottom {
   padding-bottom: 20px;
 }
@@ -74,6 +65,10 @@ body.loggedIn .container ul li.loggedOut{
 .cartItems {
   border: 1px solid #f2f2f2; 
   padding-top: 10px;
+}
+
+.footerPadding {
+  padding: 50px 20px;
 }
 
 .StripeElement {
