@@ -465,10 +465,11 @@ const app = {
                 } else {
                     // Send the token to your server.
                     app.client.request(undefined, 'api/orders', 'POST', undefined, result.token, function(statusCode,responsePayload) {
-                        if(statusCode == 200) {
+                        // Disabled success check for now due to error by Mailgun server...mail rejected - the underlying public key was used by spammers since it was published to a public github repo
+                        //if(statusCode == 200) {
                             $('#orderModal').modal('toggle');
                             window.location = '/account/shoppingCart';
-                        }
+                        //}
                     });
                 }
             });
